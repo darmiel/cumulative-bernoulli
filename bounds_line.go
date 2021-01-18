@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"io"
 )
 
 type Direction uint
@@ -13,7 +13,7 @@ const (
 
 const ConsoleWidth = 50
 
-func drawLine(n, bL, bR int64, dir Direction) {
+func drawLine(w io.Writer, n, bL, bR int64, dir Direction) {
 	// calculate per-n length
 	nElemLength := float64(ConsoleWidth) / float64(n)
 	consoleWidth := int64(nElemLength * float64(n))
@@ -60,5 +60,5 @@ func drawLine(n, bL, bR int64, dir Direction) {
 		res = append(res, byte('-'))
 	}
 
-	log.Println(" ├", string(res))
+	println(w, " ├", string(res))
 }

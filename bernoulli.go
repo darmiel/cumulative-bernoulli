@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"log"
 	"math"
 	"math/big"
@@ -25,7 +27,15 @@ func F(n int64, p float64, k int64) (res *big.Float) {
 	return
 }
 
-func findUpperBound(n int64, p float64, P float64) (*int64, *float64) {
+func println(w io.Writer, v ...interface{}) {
+	if w == nil {
+		log.Println(v...)
+	} else {
+		_, _ = fmt.Fprintln(w, v...)
+	}
+}
+
+func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float64) {
 	log.Println("+ Searching for P( X <=", P, ") [", n, "; ", p, "]")
 
 	var boundL int64 = 0
@@ -37,7 +47,8 @@ func findUpperBound(n int64, p float64, P float64) (*int64, *float64) {
 		var half = int64(math.Floor(s))
 		var val = F(n, p, half)
 		f, _ := val.Float64()
-		log.Println(" ┌ #", i, "| s:", s, "half:", half, "val:", val, "f:", f)
+
+		println(w, " ┌ #", i, "| s:", s, "half:", half, "val:", val, "f:", f)
 
 		// check if value was found
 		if f == P {
@@ -50,31 +61,32 @@ func findUpperBound(n int64, p float64, P float64) (*int64, *float64) {
 		if f < P {
 			boundL = half
 			dir = DirLeft
-			log.Println(" ├ Updated left bound to:", boundL)
+
+			println(w, " ├ Updated left bound to:", boundL)
 		} else {
 			boundR = half
 			dir = DirRight
-			log.Println(" ├ Updated right bound to:", boundR)
+			println(w, " ├ Updated right bound to:", boundR)
 		}
 
-		drawLine(n, boundL, boundR, dir)
+		drawLine(w, n, boundL, boundR, dir)
 
 		// check if bounds too narrow
 		if (boundR - boundL) <= 1 {
 			i2 := int64(math.Ceil(s)) - 1
-			log.Println(" └ Bounds too narrow. Using:", i2)
+			println(w, " └ Bounds too narrow. Using:", i2)
 			return &i2, &f
 		}
 
-		log.Println(" └ Waiting for next ...")
+		println(w, " └ Waiting for next ...")
 	}
 
 	return nil, nil
 }
 
 // lower-equals
-func findUpperBoundLe(n int64, p float64, P float64) *int64 {
-	bound, val := findUpperBound(n, p, P)
+func findUpperBoundLe(w io.Writer, n int64, p float64, P float64) *int64 {
+	bound, val := findUpperBound(w, n, p, P)
 	if bound == nil || val == nil {
 		return nil
 	}
@@ -87,8 +99,8 @@ func findUpperBoundLe(n int64, p float64, P float64) *int64 {
 }
 
 // lower-equals
-func findUpperBoundGe(n int64, p float64, P float64) *int64 {
-	bound, val := findUpperBound(n, p, P)
+func findUpperBoundGe(w io.Writer, n int64, p float64, P float64) *int64 {
+	bound, val := findUpperBound(w, n, p, P)
 	if bound == nil || val == nil {
 		return nil
 	}

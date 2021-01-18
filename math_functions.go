@@ -16,20 +16,6 @@ func nCr(n, r *big.Float) *big.Float {
 	return new(big.Float).Quo(fac(n), new(big.Float).Mul(fac(r), fac(new(big.Float).Sub(n, r))))
 }
 
-//func efficientNCr(n, r int64) (res *big.Int) {
-//	var i int64
-//	for i = 1; i <= r; i++ {
-//		part := new(big.Int).Div(big.NewInt(n+1-i), big.NewInt(i))
-//		if res == nil {
-//			res = part
-//			continue
-//		} else {
-//			res = new(big.Int).Mul(res, part)
-//		}
-//	}
-//	return
-//}
-
 func nCrEfficient(n, k int64) (res *big.Float) {
 	if 2*k > n {
 		k = n - k
