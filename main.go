@@ -28,29 +28,20 @@ func partialExp(x *big.Float, e *big.Int) (res *big.Float) {
 	for i.Int64() > 1 { // ignore 1
 		i = i.Sub(i, big.NewInt(1))
 		res = new(big.Float).Mul(res, x)
-		// log.Println("i:", i, "x:", x, "res:", res)
 	}
+
 	return
 }
 
 // nCk * p^k * (1 - p)^(n-k)
 func B(n, p, k float64) *big.Float {
-	log.Println("nCr(", n, ", ", k, ") * math.Pow(", p, ", float64(", k, ")) * math.Pow(1 - ", p, ", float64(", n, " - ", k, ")")
-
 	cr := nCr(big.NewFloat(n), big.NewFloat(k))
-	log.Println("cr:", cr)
-
-	pPk := partialExp(big.NewFloat(p), big.NewInt(int64(k))) // new(big.Int).Exp(big.NewInt(int64(p)), big.NewInt(int64(k)), nil)
-	log.Println("pPk:", pPk)
-
-	gPnk := new(big.Int).Exp(big.NewInt(int64(1-p)), big.NewInt(int64(n-k)), nil)
-	log.Println("gPnk:", cr)
-
+	pPk := partialExp(big.NewFloat(p), big.NewInt(int64(k)))
+	_1sP := new(big.Float).Sub(big.NewFloat(1.0), big.NewFloat(p))
+	NsK := big.NewInt(int64(n - k))
+	gPnk := partialExp(_1sP, NsK)
 	x1 := new(big.Float).Mul(cr, pPk)
-	log.Println("x1:", x1)
-
-	x2 := new(big.Float).Mul(x1, new(big.Float).SetInt(gPnk))
-	log.Println("x2:", x2)
+	x2 := new(big.Float).Mul(x1, gPnk)
 	return x2
 }
 
