@@ -9,20 +9,26 @@ import (
 )
 
 // nCk * p^k * (1 - p)^(n-k)
-func B(n, p, k float64) *big.Float {
+func B(n, p, k float64) float64 {
 	// cr := nCr(big.NewFloat(n), big.NewFloat(k))
 	cr := nCrEfficient(int64(n), int64(k))
 	pPk := partialExp(big.NewFloat(p), big.NewInt(int64(k)))
 	gPnk := partialExp(new(big.Float).Sub(big.NewFloat(1.0), big.NewFloat(p)), big.NewInt(int64(n-k)))
-	return new(big.Float).Mul(new(big.Float).Mul(cr, pPk), gPnk)
+
+	crF, _ := cr.Float64()
+	pPkF, _ := pPk.Float64()
+	gPnkF, _ := gPnk.Float64()
+
+	return crF * pPkF * gPnkF
+	// return new(big.Float).Mul(new(big.Float).Mul(cr, pPk), gPnk).Float64()
 }
 
 // B(n, p, 1) + B(n, p, 2) + ... + B(n, p, n)
-func F(n int64, p float64, k int64) (res *big.Float) {
-	res = big.NewFloat(0.0)
+func F(n int64, p float64, k int64) (res float64) {
+	floatN := float64(n)
 	var i int64 = 1
 	for ; i <= k; i++ {
-		res = res.Add(res, B(float64(n), p, float64(i)))
+		res += B(floatN, p, float64(i))
 	}
 	return
 }
@@ -46,19 +52,18 @@ func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float6
 		var s = float64(boundL+boundR) / 2.0
 		var half = int64(math.Floor(s))
 		var val = F(n, p, half)
-		f, _ := val.Float64()
 
-		println(w, " ┌ #", i, "| s:", s, "half:", half, "val:", val, "f:", f)
+		println(w, " ┌ #", i, "| s:", s, "half:", half, "val:", val)
 
 		// check if value was found
-		if f == P {
-			return &half, &f
+		if val == P {
+			return &half, &val
 		}
 
 		var dir Direction
 
 		// update bounds
-		if f < P {
+		if val < P {
 			boundL = half
 			dir = DirLeft
 
@@ -75,7 +80,7 @@ func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float6
 		if (boundR - boundL) <= 1 {
 			i2 := int64(math.Ceil(s)) - 1
 			println(w, " └ Bounds too narrow. Using:", i2)
-			return &i2, &f
+			return &i2, &val
 		}
 
 		println(w, " └ Waiting for next ...")

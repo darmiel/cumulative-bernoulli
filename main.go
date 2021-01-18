@@ -4,17 +4,14 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
+	"math"
+	"math/big"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func main() {
-	// res := findUpperBoundLe(12000, 0.2, 0.025)
-	// if res != nil {
-	// 	log.Println("Result:", *res)
-	// } else {
-	// 	log.Println("Nothing found :(")
-	// }
 
 	router := mux.NewRouter()
 	router.HandleFunc("/calc/{mode}/{n}/{p}/{P}", func(writer http.ResponseWriter, request *http.Request) {
@@ -123,6 +120,37 @@ func main() {
 </body>
 
 </html>`)
+	})
+
+	router.HandleFunc("/calc/fac/{n}", func(writer http.ResponseWriter, request *http.Request) {
+		vars := mux.Vars(request)
+		nStr := vars["n"]
+
+		n, err := strconv.ParseFloat(nStr, 64)
+		if err != nil {
+			_, _ = fmt.Fprint(writer, err)
+			return
+		}
+
+		if n > 500_000 {
+			_, _ = fmt.Fprint(writer, "The current cap is 500.000 :)")
+			return
+		}
+
+		start := time.Now()
+		res := fac(big.NewFloat(n))
+
+		milliseconds := time.Since(start).Milliseconds()
+		text := []byte(res.Text('g', math.MaxInt32))
+
+		_, _ = fmt.Fprintf(writer, "✅ %f! = [%dms] [%d bytes] \n", n, milliseconds, len(text))
+
+		for i := 0; i < len(text); i++ {
+			if i%3 == 0 {
+				_, _ = fmt.Fprint(writer, " ")
+			}
+			_, _ = fmt.Fprint(writer, string(text[i]))
+		}
 	})
 
 	if err := http.ListenAndServe(":1339", router); err != nil {
