@@ -5,7 +5,9 @@ import (
 )
 
 func main() {
-	res := findUpperBoundLe(1200, 0.2, 0.025)
+	log.Println(F(2000, 0.2, 300))
+
+	res := findUpperBoundLe(2000, 0.2, 0.025)
 	if res != nil {
 		log.Println("Result:", *res)
 	} else {

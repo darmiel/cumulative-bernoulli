@@ -22,14 +22,14 @@ func drawLine(n, bL, bR int64, dir Direction) {
 	left := false
 	right := false
 
-	var res []byte
+	var res = []byte("")
 	var i int64
 	for i = 0; i < consoleWidth; i++ {
 		if i == 0 {
-			res = append(res, []byte("[")[0])
+			res = append(res, byte('['))
 			continue
 		} else if i+1 == consoleWidth {
-			res = append(res, []byte("]")[0])
+			res = append(res, byte(']'))
 			continue
 		}
 
@@ -39,17 +39,25 @@ func drawLine(n, bL, bR int64, dir Direction) {
 
 		idx := nValue * (i + 1)
 		if idx >= bL && !left {
-			res = append(res, []byte("{")[0])
+			if dir == DirRight && res[i-1] == byte('-') {
+				res = append(res, byte('>'))
+			} else {
+				res = append(res, byte('{'))
+			}
 			left = true
 			continue
 		}
 		if idx >= bR && !right {
-			res = append(res, []byte("}")[0])
+			if dir == DirLeft && res[i-1] == byte('-') {
+				res = append(res, byte('<'))
+			} else {
+				res = append(res, byte('}'))
+			}
 			right = true
 			continue
 		}
 
-		res = append(res, []byte("-")[0])
+		res = append(res, byte('-'))
 	}
 
 	log.Println(" ├", string(res))

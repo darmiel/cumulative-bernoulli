@@ -43,16 +43,20 @@ func findUpperBound(n int64, p float64, P float64) (*int64, *float64) {
 			return &half, &f
 		}
 
+		var dir Direction
+
 		// update bounds
 		if f < P {
 			boundL = half
+			dir = DirLeft
 			log.Println(" ├ Updated left bound to:", boundL)
 		} else {
 			boundR = half
+			dir = DirRight
 			log.Println(" ├ Updated right bound to:", boundR)
 		}
 
-		drawLine(n, boundL, boundR, DirLeft)
+		drawLine(n, boundL, boundR, dir)
 
 		// check if bounds too narrow
 		if (boundR - boundL) <= 1 {
