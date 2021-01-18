@@ -8,7 +8,8 @@ import (
 
 // nCk * p^k * (1 - p)^(n-k)
 func B(n, p, k float64) *big.Float {
-	cr := nCr(big.NewFloat(n), big.NewFloat(k))
+	// cr := nCr(big.NewFloat(n), big.NewFloat(k))
+	cr := nCrEfficient(int64(n), int64(k))
 	pPk := partialExp(big.NewFloat(p), big.NewInt(int64(k)))
 	gPnk := partialExp(new(big.Float).Sub(big.NewFloat(1.0), big.NewFloat(p)), big.NewInt(int64(n-k)))
 	return new(big.Float).Mul(new(big.Float).Mul(cr, pPk), gPnk)
