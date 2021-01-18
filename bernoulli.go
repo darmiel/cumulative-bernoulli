@@ -52,6 +52,8 @@ func findUpperBound(n int64, p float64, P float64) (*int64, *float64) {
 			log.Println(" ├ Updated right bound to:", boundR)
 		}
 
+		drawLine(n, boundL, boundR, DirLeft)
+
 		// check if bounds too narrow
 		if (boundR - boundL) <= 1 {
 			i2 := int64(math.Ceil(s)) - 1
