@@ -45,7 +45,17 @@ func B(n, p, k float64) *big.Float {
 	return x2
 }
 
+func F(n int64, p float64, k int64) (res *big.Float) {
+	res = big.NewFloat(0.0)
+
+	var i int64 = 1
+	for ; i <= k; i++ {
+		res = res.Add(res, B(float64(n), p, float64(i)))
+	}
+
+	return
+}
+
 func main() {
-	log.Println("B(100;0.2;20)", B(100, .2, 20))
-	log.Println(partialExp(big.NewFloat(0.2), big.NewInt(100)))
+	log.Println("F (100; 0.2; 20)", F(100, .2, 20))
 }
