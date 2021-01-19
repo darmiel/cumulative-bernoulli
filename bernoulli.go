@@ -88,30 +88,30 @@ func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float6
 }
 
 // lower-equals
-func findUpperBoundLe(w io.Writer, n int64, p float64, P float64) *int64 {
+func findUpperBoundLe(w io.Writer, n int64, p float64, P float64) (*int64, *float64) {
 	bound, val := findUpperBound(w, n, p, P)
 	if bound == nil || val == nil {
-		return nil
+		return nil, nil
 	}
 	if *val > P {
 		i := *bound - 1
-		return &i
+		return &i, val
 	} else {
-		return bound
+		return bound, val
 	}
 }
 
 // lower-equals
-func findUpperBoundGe(w io.Writer, n int64, p float64, P float64) *int64 {
+func findUpperBoundGe(w io.Writer, n int64, p float64, P float64) (*int64, *float64) {
 	bound, val := findUpperBound(w, n, p, P)
 	if bound == nil || val == nil {
-		return nil
+		return nil, nil
 	}
 	if *val > P {
 		i := *bound
-		return &i
+		return &i, val
 	} else {
 		i := *bound + 1
-		return &i
+		return &i, val
 	}
 }
