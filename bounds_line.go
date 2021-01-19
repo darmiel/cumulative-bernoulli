@@ -11,7 +11,7 @@ const (
 	DirRight
 )
 
-const ConsoleWidth = 150
+const ConsoleWidth = 40
 
 func drawLine(w io.Writer, n, bL, bR int64, dir Direction) {
 	// calculate per-n length

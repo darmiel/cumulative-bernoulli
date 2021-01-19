@@ -42,8 +42,6 @@ func println(w io.Writer, v ...interface{}) {
 }
 
 func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float64) {
-	log.Println("+ Searching for P( X <=", P, ") [", n, "; ", p, "]")
-
 	var boundL int64 = 0
 	var boundR = n
 
@@ -53,7 +51,7 @@ func findUpperBound(w io.Writer, n int64, p float64, P float64) (*int64, *float6
 		var half = int64(math.Floor(s))
 		var val = F(n, p, half)
 
-		println(w, " ┌ #", i, "| s:", s, "half:", half, "val:", val)
+		println(w, " ┌", i, "half:", half, "val:", val)
 
 		// check if value was found
 		if val == P {
